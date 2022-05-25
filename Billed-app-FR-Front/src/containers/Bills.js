@@ -39,7 +39,8 @@ export default class {
               return {
                 ...doc,
                 date: formatDate(doc.date),
-                status: formatStatus(doc.status)
+                status: formatStatus(doc.status),
+                unformatedDate: doc.date
               }
             } catch(e) {
               // if for some reason, corrupted data was introduced, we manage here failing formatDate function
