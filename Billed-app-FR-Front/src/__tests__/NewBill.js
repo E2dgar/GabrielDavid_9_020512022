@@ -67,11 +67,12 @@ describe("Given I am connected as an employee", () => {
       const newBill = new NewBill({
         document,
         onNavigate,
-        store: null,
+        store: mockStore,
         localStorage: window.localStorage,
       })
 
       const handleChangeFile = jest.fn(newBill.handleChangeFile)
+      const formDataSpy = jest.spyOn(newBill, 'createFormData')
       const fileInput = await waitFor(() => screen.getByTestId("file"))
       fileInput.addEventListener('change', handleChangeFile)
 
@@ -83,8 +84,22 @@ describe("Given I am connected as an employee", () => {
         },
       })
       
+      
+      expect(formDataSpy).toHaveBeenCalled()
       expect(handleChangeFile).toHaveBeenCalled()
       expect(fileInput.files[0].name).toBe('test-file.png')
+    })
+
+    test('Then formData must have been created', async () => {  
+      /*const newBill = new NewBill({
+        document,
+        onNavigate,
+        store: mockStore,
+        localStorage: window.localStorage,
+      })
+
+      const createFormData = jest.fn(newBill.createFormData)*/
+      
     })
   })
 
