@@ -69,8 +69,8 @@ describe("Given I am connected as an employee", () => {
   })
 
   describe("When I'm on bills page and I click on new bill", () => {
-    test('Then I should be on NewBill page', async () => {
-     /* const billsClass = new Bills({
+    /*test('Then I should be on NewBill page', async () => {
+      const billsClass = new Bills({
         document,
         onNavigate,
         store: mockStore,
@@ -81,14 +81,15 @@ describe("Given I am connected as an employee", () => {
 
       const handleClickNewBill = jest.fn(billsClass.handleClickNewBill)
       const newBill = await waitFor(() => screen.getByTestId("btn-new-bill"))
-      expect(newBill).toBeTruthy()
+      
       newBill.addEventListener("click", handleClickNewBill)
       userEvent.click(newBill)
 
       expect(handleClickNewBill).toHaveBeenCalled()
       expect(screen.getAllByTestId('new-bill')).toBeTruthy()
-*/
-    })
+
+      newBill.removeEventListener("click", handleClickNewBill)
+    })*/
   })
 
   /*Test intégration*/
