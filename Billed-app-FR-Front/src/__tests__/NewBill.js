@@ -21,7 +21,8 @@ describe("Given I am connected as an employee", () => {
     test("Then mail icon in vertical layout should be highlighted", async () => {
       Object.defineProperty(window, 'localStorage', { value: localStorageMock })
       window.localStorage.setItem('user', JSON.stringify({
-        type: 'Employee'
+        type: 'Employee',
+        email: 'a@a'
       }))
       const root = document.createElement("div")
       root.setAttribute("id", "root")
@@ -36,18 +37,14 @@ describe("Given I am connected as an employee", () => {
   })
 
   describe("When I am on NewBill Page and I upload a wrong format file", () => {
-    test("Then alert message must be send", async () => {
-      const newBill = new NewBill({
-        document,
-        onNavigate,
-        store: null,
-        localStorage: window.localStorage,
-      })
+    afterEach(() => {    
+      jest.clearAllMocks();
+    });
 
+    test("Then alert message must be send", async () => {    
       jest.spyOn(window, 'alert')
-      const handleChangeFile = jest.fn((e) => newBill.handleChangeFile(e))
+
       const fileInput = await waitFor(() => screen.getByTestId("file"))
-      fileInput.addEventListener('change', handleChangeFile)
 
       fireEvent.change(fileInput, {
         target: {
@@ -57,13 +54,12 @@ describe("Given I am connected as an employee", () => {
         }
       })
 
-      expect(handleChangeFile).toHaveBeenCalled()
       expect(window.alert).toHaveBeenCalledWith('Format invalide. Formats acceptés: jpg, jpeg, png')
     })
   })
 
   describe('When I upload a file with a jpg, jpeg or png extension', () => {
-    test('Then input file must display input name', async () => {  
+    test('Then input file must display input name and alert must not be send', async () => {  
       const newBill = new NewBill({
         document,
         onNavigate,
@@ -71,35 +67,27 @@ describe("Given I am connected as an employee", () => {
         localStorage: window.localStorage,
       })
 
-      const handleChangeFile = jest.fn(newBill.handleChangeFile)
-      const formDataSpy = jest.spyOn(newBill, 'createFormData')
-      const fileInput = await waitFor(() => screen.getByTestId("file"))
-      fileInput.addEventListener('change', handleChangeFile)
+      jest.spyOn(window, 'alert')
+      jest.spyOn(newBill, 'createFormData')
 
-      fireEvent.change(fileInput, {
+      const handleChangeFile = jest.fn(e => newBill.handleChangeFile(e))
+      const fileInputWrong = await waitFor(() => screen.getByTestId("file"))
+      
+      fileInputWrong.addEventListener('change', handleChangeFile)
+
+      fireEvent.change(fileInputWrong, {
         target: {
           files: [
-            new File(['test-file'], 'test-file.png'),
+            new File(['test-file.png'], 'test-file.png'),
           ],
         },
       })
       
-      
-      expect(formDataSpy).toHaveBeenCalled()
+      expect(window.alert).not.toHaveBeenCalled()
       expect(handleChangeFile).toHaveBeenCalled()
-      expect(fileInput.files[0].name).toBe('test-file.png')
-    })
-
-    test('Then formData must have been created', async () => {  
-      /*const newBill = new NewBill({
-        document,
-        onNavigate,
-        store: mockStore,
-        localStorage: window.localStorage,
-      })
-
-      const createFormData = jest.fn(newBill.createFormData)*/
+      expect(newBill.createFormData).toHaveBeenCalled()
       
+      fileInputWrong.removeEventListener('change', handleChangeFile)
     })
   })
 
@@ -108,7 +96,7 @@ describe("Given I am connected as an employee", () => {
       const newBill = new NewBill({
         document,
         onNavigate,
-        store: null,
+        store: mockStore,
         localStorage: window.localStorage,
       })
 
@@ -121,6 +109,8 @@ describe("Given I am connected as an employee", () => {
 
       expect(handleSubmit).toHaveBeenCalled()
       expect(screen.getByTestId('note-de-frais-heading')).toBeTruthy()
+
+      formNewBill.removeEventListener('submit', handleSubmit)
     })
 
     test('Then a new bill should be created in the API', async () => {
@@ -165,6 +155,8 @@ describe("Given I am connected as an employee", () => {
       await waitFor(() => screen.getByTestId('note-de-frais-heading'))
       expect(spyHandleSubmit).toHaveBeenCalled()
       expect(spyUpdateBill).toHaveBeenCalled()
+
+      form.removeEventListener('submit', ((event) => newBill.handleSubmit(event)))
     })
   })  
 })

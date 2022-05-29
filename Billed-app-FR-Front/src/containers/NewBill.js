@@ -18,17 +18,17 @@ export default class NewBill {
   handleChangeFile = e => {
     e.preventDefault()
 
-    
     const fileInput = this.document.querySelector(`input[data-testid="file"]`)
     const filePath = e.target.value.split(/\\/g)
     const imgFile = {
       file: fileInput.files[0],
-      fileName: filePath[filePath.length-1],
+      fileName: fileInput.files[0].name,
     }
-    const fileExtension = "." + imgFile.fileName.split(".")[1]
+    console.log(imgFile.fileName)
+    const fileExtension = imgFile.fileName.split(".")[1]
     
-
-    const allowedExtensions = [".jpg", ".jpeg", ".png"]
+    console.log(fileExtension)
+    const allowedExtensions = ["jpg", "jpeg", "png"]
 
     if(!allowedExtensions.includes(fileExtension)){
       alert('Format invalide. Formats acceptés: jpg, jpeg, png');
