@@ -69,7 +69,7 @@ describe("Given I am connected as an employee", () => {
   })
 
   describe("When I'm on bills page and I click on new bill", () => {
-    /*test('Then I should be on NewBill page', async () => {
+    test('Then I should be on NewBill page', async () => {
       const billsClass = new Bills({
         document,
         onNavigate,
@@ -89,7 +89,7 @@ describe("Given I am connected as an employee", () => {
       expect(screen.getAllByTestId('new-bill')).toBeTruthy()
 
       newBill.removeEventListener("click", handleClickNewBill)
-    })*/
+    })
   })
 
   /*Test intégration*/
