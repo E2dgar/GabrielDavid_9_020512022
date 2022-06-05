@@ -20,7 +20,12 @@ const row = (bill) => {
   }
 
 const rows = (data) => {
-  return (data && data.length) ? data.map(bill => row(bill)).join("") : ""
+  if(data && data.length) {
+    data.sort((a,b) => new Date(b.unformatedDate ?? b.date) - new Date(a.unformatedDate ?? a.date));
+
+    return data.map(bill => row(bill)).join("")
+  }
+  return  ""
 }
 
 export default ({ data: bills, loading, error }) => {
@@ -53,7 +58,7 @@ export default ({ data: bills, loading, error }) => {
       ${VerticalLayout(120)}
       <div class='content'>
         <div class='content-header'>
-          <div class='content-title'> Mes notes de frais </div>
+          <div class='content-title' data-testid='note-de-frais-heading'> Mes notes de frais </div>
           <button type="button" data-testid='btn-new-bill' class="btn btn-primary">Nouvelle note de frais</button>
         </div>
         <div id="data-table">
