@@ -5,7 +5,7 @@
 import {screen, waitFor} from "@testing-library/dom"
 import BillsUI from "../views/BillsUI.js"
 import { bills } from "../fixtures/bills.js"
-import { ROUTES_PATH} from "../constants/routes.js";
+import { ROUTES, ROUTES_PATH} from "../constants/routes.js";
 import {localStorageMock} from "../__mocks__/localStorage.js";
 import Bills from "../containers/Bills.js";
 import userEvent from "@testing-library/user-event";
@@ -17,6 +17,10 @@ import router from "../app/Router.js";
 jest.mock('../app/store', () => mockStore)
 
 describe("Given I am connected as an employee", () => {
+  const onNavigate = (pathname) => {
+    document.body.innerHTML = ROUTES({ pathname });
+  }
+
   describe("When I am on Bills Page", () => {
     test("Then bill icon in vertical layout should be highlighted", async () => {
 
@@ -41,6 +45,7 @@ describe("Given I am connected as an employee", () => {
       const datesSorted = [...dates].sort(antiChrono)
       expect(dates).toEqual(datesSorted)
     })
+    document.body.innerHTML = ""
   })
 
   describe("When I'm on bills page and I click on eye's icon", () => {
@@ -57,7 +62,7 @@ describe("Given I am connected as an employee", () => {
       document.body.innerHTML = BillsUI({ data: bills })
 
       const handleClickIconEye = jest.fn(billsClass.handleClickIconEye)
-      const iconEyeList = screen.getAllByTestId('icon-eye')
+      const iconEyeList = await waitFor(() => screen.getAllByTestId('icon-eye'))
       iconEyeList.forEach((iconEye) =>
         iconEye.addEventListener('click', (e) => handleClickIconEye(iconEye))
       )
@@ -65,6 +70,8 @@ describe("Given I am connected as an employee", () => {
 
       expect(handleClickIconEye).toHaveBeenCalled()
       expect(screen.getByTestId('modal-show')).toBeTruthy()
+
+      document.body.innerHTML = ""
     })
   })
 
@@ -73,22 +80,23 @@ describe("Given I am connected as an employee", () => {
       const billsClass = new Bills({
         document,
         onNavigate,
-        store: mockStore,
+        store: null,
         bills: bills,
-        localStorage: window.localStorage,
+        localStorage: window.localStorage
       })
       document.body.innerHTML = BillsUI({ data: bills })
-
-      const handleClickNewBill = jest.fn(billsClass.handleClickNewBill)
-      const newBill = await waitFor(() => screen.getByTestId("btn-new-bill"))
+      jest.spyOn(billsClass, 'handleClickNewBill')
       
-      newBill.addEventListener("click", handleClickNewBill)
-      userEvent.click(newBill)
+      const handleClickNewBill = jest.fn(billsClass.handleClickNewBill)
+      const newBillButton = screen.getByTestId("btn-new-bill")
+      
+     newBillButton.addEventListener("click", handleClickNewBill)
 
-      expect(handleClickNewBill).toHaveBeenCalled()
-      expect(screen.getAllByTestId('new-bill')).toBeTruthy()
+      userEvent.click(newBillButton)
 
-      newBill.removeEventListener("click", handleClickNewBill)
+      expect(billsClass.handleClickNewBill).toHaveBeenCalled()
+
+      newBillButton.removeEventListener("click", handleClickNewBill)
     })
   })
 
