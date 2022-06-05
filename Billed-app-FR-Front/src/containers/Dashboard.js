@@ -136,6 +136,10 @@ export default class {
 
     const billsContainer =  $(`#status-bills-container${index}`)[0]
 
+    /*Par défault arrow en bas et listes vides*/
+    billsContainer.innerHTML = ""
+    $(arrow).css({ transform: 'rotate(90deg)'})
+
     if(arrow.classList.contains('open-list')){
       /*A l'ouverture de la liste on insert les bills filtrés*/
       const uiFilteredBills = filteredBills(bills, getStatus(index))
@@ -146,10 +150,6 @@ export default class {
       })
       /*On change le sens de la flêche */
       $(arrow).css({ transform: 'rotate(0deg)'})
-    } else {
-      /*Sinon flêche sens fermé et on vide le bills container*/
-      $(arrow).css({ transform: 'rotate(90deg)'})
-      billsContainer.innerHTML = ""
     }
   }
 

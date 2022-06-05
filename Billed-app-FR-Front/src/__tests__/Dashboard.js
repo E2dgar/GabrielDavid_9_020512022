@@ -74,9 +74,16 @@ describe('Given I am connected as an Admin', () => {
 
       icon1.addEventListener('click', handleShowTickets1)
       userEvent.click(icon1)
+
+      
+
       expect(handleShowTickets1).toHaveBeenCalled()
       await waitFor(() => screen.getByTestId(`open-bill47qAXb6fIm2zOKkLzMro`) )
       expect(screen.getByTestId(`open-bill47qAXb6fIm2zOKkLzMro`)).toBeTruthy()
+
+      const billsContainer2 = await waitFor(() =>screen.getByTestId("bills-container-2"))
+      expect(billsContainer2.childNodes.length).toBe(1)
+
       icon2.addEventListener('click', handleShowTickets2)
       userEvent.click(icon2)
       expect(handleShowTickets2).toHaveBeenCalled()
