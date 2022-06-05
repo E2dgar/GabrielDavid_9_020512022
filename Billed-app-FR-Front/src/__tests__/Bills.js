@@ -125,6 +125,40 @@ describe("Given I am connected as an employee", () => {
 		});
 	});
 
+  describe("When I navigate to bills and data is corrupted", () => {
+    
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation()
+
+    beforeEach(() => {
+      consoleSpy.mockClear()
+    })
+
+		test("Then console must display message", async () => {
+      const mockedCorruptedBills = {
+          list : () => {
+            return Promise.resolve([{
+            "corruptedDate": "corrupted", 
+            "corruptedStatus": "corrupted"
+          }])}
+      }
+      const billsClass = new Bills({
+        document,
+        onNavigate,
+        store: {
+          bills: () => mockedCorruptedBills
+        },
+        localStorage: window.localStorage,
+      })
+
+      const getSpy = jest.spyOn(billsClass, 'getBills')
+      const data = await billsClass.getBills()
+      const mockedBills = await billsClass.store.bills().list()
+
+      expect(getSpy).toHaveBeenCalledTimes(1)      
+      expect(console.log).toBeCalled()
+		});
+	});
+
   describe("When an error occurs on API", () => {
     beforeEach(() => {
       jest.spyOn(mockStore, "bills")
