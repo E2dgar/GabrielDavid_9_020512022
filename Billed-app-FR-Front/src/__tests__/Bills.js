@@ -100,7 +100,7 @@ describe("Given I am connected as an employee", () => {
     })
   })
 
-  /*Test intégration*/
+  /*Test Get*/
   describe("When I navigate to bills", () => {
 		test("Then bills are fetched from mock API GET", async () => {
       const billsClass = new Bills({
@@ -128,12 +128,11 @@ describe("Given I am connected as an employee", () => {
   describe("When I navigate to bills and data is corrupted", () => {
     
     const consoleSpy = jest.spyOn(console, 'log').mockImplementation()
-
     beforeEach(() => {
       consoleSpy.mockClear()
     })
 
-		test("Then console must display message", async () => {
+    test("Then console must display message", async () => {
       const mockedCorruptedBills = {
           list : () => {
             return Promise.resolve([{
